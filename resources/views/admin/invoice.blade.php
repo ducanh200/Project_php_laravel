@@ -1,0 +1,224 @@
+@extends("admin.layout")
+@section("main")
+    <div class="row" >
+        <div class="col-12" >
+            <div class="callout callout-info" style="background-color: #454d55;color: #fff">
+                <h5><i class="fas fa-info"></i> Note:</h5>
+                This page has been enhanced for printing. Click the print button at the bottom of the invoice to test.
+            </div>
+
+
+            <!-- Main content -->
+            <div class="invoice p-3 mb-3" style="background-color: #454d55;color: #fff">
+                <!-- title row -->
+                <div class="row">
+                    <div class="col-12" >
+                        <h4>
+                            <i class="fas fa-globe"></i> AdminLTE, Inc.
+
+                            <small class="float-right">Date: {{$order->created_at}}</small>
+
+                        </h4>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- info row -->
+                <div class="row invoice-info">
+                    <div class="col-sm-4 invoice-col">
+                        From
+                        <address>
+                            <strong>Admin.</strong><br>
+                           Ha Noi - Mi Dinh 2<br>
+                            8A-Ton That Thuyet<br>
+                            Phone: 0965051658<br>
+                            Email: anguyenduc075@gmail.com
+                        </address>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-4 invoice-col">
+                        To
+                        <address>
+                            <strong>{{$order->firstname.", ".$order->lastname}}</strong><br>
+                            {{$order->address.",".$order->city.",".$order->country}}<br>
+                            @if($order->is_paid ==0)
+                                Paid: UnPaid<br>
+                            @else
+                                Paid: Paid<br>
+                            @endif
+                            Phone: {{$order->phone}}<br>
+                            Email: {{$order->email}}
+                        </address>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-4 invoice-col">
+                        <b>Invoice #{{$order->id}}</b><br>
+                        <br>
+                        <b>Order ID:</b> {{$order->id}}<br>
+                        <b>Payment Due:</b> {{$order->payment_method}}<br>
+                        <b>Order at: {{$order->created_at}}</b>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+
+                <!-- Table row -->
+                <div class="row">
+                    <div class="col-12 table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Order_id</th>
+                                <th>Product</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Discount</th>
+                                <th>Remaining</th>
+                                <th>Thumbnail</th>
+                                <th>Subtotal</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($order->products as $item)
+                                <tr>
+                                    <td>{{$order->id}}</td>
+                                    <td>{{$item->name}}</td>
+                                    <td>{{$item->pivot->buy_qty}}</td>
+                                    <td>${{$item->price}}</td>
+                                    <td>{{$item->discount}}%</td>
+                                    <td>${{$item->price-($item->price*$item->discount/100)}}</td>
+                                    <td><img src="{{$item->thumbnail}}" class="img-thumbnail" width="60"/> </td>
+                                    <td>${{($item->price-($item->price*$item->discount/100))  * $item->pivot->buy_qty}}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+
+
+                <div class="row">
+                    <!-- accepted payments column -->
+                    <div class="col-6">
+                        <p class="lead">Payment Methods:</p>
+                        <img src="../../dist/img/credit/visa.png" alt="Visa">
+                        <img src="../../dist/img/credit/mastercard.png" alt="Mastercard">
+                        <img src="../../dist/img/credit/american-express.png" alt="American Express">
+                        <img src="../../dist/img/credit/paypal2.png" alt="Paypal">
+
+                        <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                            Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles, weebly ning heekya handango imeem
+                            plugg
+                            dopplr jibjab, movity jajah plickers sifteo edmodo ifttt zimbra.
+                        </p>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-6">
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tr>
+                                    <th style="width:50%">Subtotal:</th>
+                                    <td>${{$order->total}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Tax (0)</th>
+                                    <td>$0</td>
+                                </tr>
+                                <tr>
+                                    <th>Shipping:</th>
+                                    @if($order->total >100)
+                                        <td>$0(Free shipping on order over $100)</td>
+                                    @else
+                                        <td>$5</td>
+                                    @endif
+                                </tr>
+                                <tr>
+                                    <th>Total:</th>
+                                    @if($order->total >100)
+                                        <td>${{$order->total}}</td>
+                                    @else
+                                        <td>${{$order->total + 5.00}}</td>
+                                    @endif
+
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+
+                <!-- this row will not appear when printing -->
+                <div class="row no-print">
+                    <div class="col-12">
+                        <a href="{{url("/admin/orders")}}" rel="noopener" target="_blank" class="btn btn-default"><i class="nav-icon fas fa-th"></i> Orders</a>
+                        <b>
+                            @switch($order->status)
+                                @case(0)<span class="text text-dark">Pending</span>@break
+                                @case(1)<span class="text text-blue">Confirmed</span>@break
+                                @case(2)<span class="text text-warning">Shipping</span>@break
+                                @case(3)<span class="text text-warning">Shipped</span>@break
+                                @case(4)<span class="text text-success">Completed</span>@break
+                                @case(5)<span class="text text-warning">Cancelled</span>@break
+                                @case(6)<span class="text text-danger">Pending Returns Confirm</span>@break
+                                @case(7)<span class="text text-purple">Returns Confirmed</span>@break
+                                @case(8)<span class="text text-success">Returns Completed</span>
+                                @case(9)<span class="text text-success">Returns failed</span>
+
+                                @break
+                            @endswitch
+                        </b>
+                        @switch($order->status)
+                            @case(0)
+                                <a href="{{url("admin/orders/confirm",["order"=>$order->id])}}" class="btn btn-success float-right"><i class="far fa-credit-card"></i>
+                                    Confirm
+                                </a>
+                                <a href="{{url("admin/orders/cancel",["order"=>$order->id])}}" class="btn btn-danger float-right"><i class="far fa-credit-card"></i>
+                                    Cancelled
+                                </a>
+                                @break
+                            @case(1)
+                                <a href="{{url("admin/orders/shipping",["order"=>$order->id])}}" class="btn btn-success float-right"><i class="far fa-credit-card"></i>
+                                    Shipping
+                                </a>
+                                @break
+                            @case(2)
+                                <a href="{{url("admin/orders/shipped",["order"=>$order->id])}}" class="btn btn-success float-right"><i class="far fa-credit-card"></i>
+                                    Shipped
+                                </a>
+                                @break
+                            @case(3)
+                                <a href="{{url("admin/orders/complete",["order"=>$order->id])}}" class="btn btn-success float-right"><i class="far fa-credit-card"></i>
+                                    Complete
+                                </a>
+                                @break
+                            @case(4)
+                                @break
+                            @case(5)
+                                @break
+                            @case(6)
+                                <a href="{{url("admin/orders/returnconfirm",["order"=>$order->id])}}" class="btn btn-success float-right"><i class="far fa-credit-card"></i>  Return Confirmed</a>
+                                <a href="{{url("admin/orders/returnfailed",["order"=>$order->id])}}" class="btn btn-danger float-right"><i class="far fa-credit-card"></i>
+                                    Return Cancel
+                                </a>
+
+                                @break
+                            @case(7)
+                                <a href="{{url("admin/orders/returncomplete",["order"=>$order->id])}}" class="btn btn-success float-right"><i class="far fa-credit-card"></i>  Return Completed</a>
+                                @break
+                            @case(8)
+                                @break
+                            @case(9)
+                                @break
+
+                        @endswitch
+                    </div>
+                </div>
+            </div>
+            <!-- /.invoice -->
+        </div><!-- /.col -->
+@endsection
+
+

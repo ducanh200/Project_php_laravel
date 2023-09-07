@@ -1,0 +1,44 @@
+* {
+    background: #ffffff;
+}
+
+body {
+    height: 1000px;
+    background: #deefe8;
+    margin: 0 auto;
+    width: 1000px;
+}
+
+body h1 {
+    background: #e8b0b0;
+}
+
+h1 {
+    color: #0b164f;
+    margin: 0 auto;
+    text-align: center;
+}
+
+body h2 {
+    background: #deefe8;
+    margin: 0 auto;
+    text-align: center;
+}
+
+p {
+    margin: 0 auto;
+    text-align: center;
+}
+
+body h3 {
+    background: #deefe8;
+}
+
+body h3 u {
+    background: #deefe8;
+}
+
+h3 {
+    margin: 30px auto;
+    text-align: justify;
+}
